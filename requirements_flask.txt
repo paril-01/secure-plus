@@ -1,0 +1,7 @@
+flask
+flask-cors
+flask-jwt-extended
+sqlalchemy
+python-multipart
+uuid
+cryptography

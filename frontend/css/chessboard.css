@@ -1,0 +1,198 @@
+/* Chessboard Styles */
+.chess-board {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+}
+
+.chess-board td {
+    width: 12.5%;
+    height: 12.5%;
+    position: relative;
+    text-align: center;
+    font-size: 2.5em;
+    cursor: pointer;
+}
+
+.chess-board .white {
+    background-color: #eeeed2;
+}
+
+.chess-board .black {
+    background-color: #769656;
+}
+
+/* Highlighting */
+.chess-board .selected {
+    background-color: rgba(0, 216, 255, 0.5) !important;
+}
+
+.chess-board .valid-move {
+    background-color: rgba(173, 255, 47, 0.5) !important;
+}
+
+.chess-board .last-move {
+    background-color: rgba(255, 255, 0, 0.3) !important;
+}
+
+.chess-board .in-check {
+    background-color: rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Chess Pieces */
+.chess-piece {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.8rem;
+    user-select: none;
+    cursor: grab;
+}
+
+.chess-piece:active {
+    cursor: grabbing;
+}
+
+.white-piece {
+    color: #fff;
+    text-shadow: 0 0 2px #000;
+}
+
+.black-piece {
+    color: #000;
+    text-shadow: 0 0 2px #666;
+}
+
+/* Coordinates */
+.file-label, .rank-label {
+    position: absolute;
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.file-label {
+    bottom: 2px;
+    right: 2px;
+}
+
+.rank-label {
+    top: 2px;
+    left: 2px;
+}
+
+.black .file-label, .black .rank-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Animation for moves */
+@keyframes piece-move {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(var(--targetX), var(--targetY)); }
+}
+
+.moving-piece {
+    position: absolute;
+    z-index: 100;
+    animation: piece-move 0.3s forwards;
+}
+
+/* Special move indicators */
+.castle-indicator::before, 
+.en-passant-indicator::before, 
+.promotion-indicator::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.8rem;
+    padding: 2px 5px;
+    border-radius: 3px;
+    opacity: 0.8;
+}
+
+.castle-indicator::before {
+    content: "Castle";
+    background-color: #3498db;
+    color: white;
+}
+
+.en-passant-indicator::before {
+    content: "En Passant";
+    background-color: #9b59b6;
+    color: white;
+}
+
+.promotion-indicator::before {
+    content: "Promote";
+    background-color: #f1c40f;
+    color: black;
+}
+
+/* Promotion selection panel */
+.promotion-panel {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    z-index: 200;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.promotion-option {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    cursor: pointer;
+}
+
+.promotion-option:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Futuristic tech enhancements */
+.board-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.1;
+    background: 
+        linear-gradient(to right, var(--accent-color) 1px, transparent 1px) 0 0 / 12.5% 100%,
+        linear-gradient(to bottom, var(--accent-color) 1px, transparent 1px) 0 0 / 100% 12.5%;
+}
+
+.board-scanner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right, transparent, var(--accent-color), transparent);
+    animation: scan 3s linear infinite;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+@keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
+/* Special sequence animation */
+@keyframes special-sequence {
+    0% { box-shadow: inset 0 0 5px var(--accent-color); }
+    50% { box-shadow: inset 0 0 20px var(--accent-color); }
+    100% { box-shadow: inset 0 0 5px var(--accent-color); }
+}
+
+.special-sequence {
+    animation: special-sequence 1s infinite;
+}

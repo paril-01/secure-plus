@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/chessboard.css">
+    <link rel="stylesheet" href="css/chess-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+</style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Chess Game UI (Visible to everyone) -->
+        <div id="chess-interface" class="active">
+            <div class="header">
+                <h1>CyberChess</h1>
+                <p class="subtitle">Experience the ultimate chess challenge</p>
+            </div>
+            
+            <div class="game-container">
+                <div id="board-container">
+                    <div id="chessboard"></div>
+                    <div class="controls">
+                        <button id="reset-board">Reset Board</button>
+                        <button id="play-ai">Play vs AI</button>
+                    </div>
+                    <div class="players-container">
+                        <div class="player-info player1">
+                            <span class="material-icons">person</span>
+                            <span>Player 1</span>
+                        </div>
+                        <div class="player-info player2">
+                            <span class="material-icons">person_outline</span>
+                            <span>Player 2</span>
+                        </div>
+                    </div>
+                    <div class="move-history">
+                        <h3>Move History</h3>
+                        <div id="moves"></div>
+                    </div>
+                    <div class="game-controls">
+                        <button id="switch-view">Switch View</button>
+                    </div>
+                </div>
+                
+                <div class="chat">
+                    <h3>Chat</h3>
+                    <div class="chat-messages">
+                        <div class="chat-message system-message">
+                            <span class="system-prefix">System:</span>
+                            <span class="message-content">Make the special chess sequence to enable login.</span>
+                        </div>
+                        <div class="chat-message system-message">
+                            <span class="system-prefix">System:</span>
+                            <span class="message-content">Sequence: e2-e4, e7-e5, g1-f3, b8-c6, f1-c4, g8-f6</span>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chat-input" placeholder="Complete the chess sequence to enable chat..." disabled>
+                        <button id="send" disabled>Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login UI (Hidden until secret chess moves are played) -->
+        <div id="login-interface" class="hidden">
+            <div class="login-container">
+                <div class="login-header">
+                    <h2>SecurePlus</h2>
+                    <p>Enter your credentials</p>
+                </div>
+                
+                <div class="login-form">
+                    <input type="text" id="username" placeholder="Username">
+                    <input type="password" id="password" placeholder="Password">
+                    <button id="login-button">Login</button>
+                    <button id="back-to-chess">Back to Chess</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App UI (Only visible after login) -->
+        <div id="secure-plus-interface" class="hidden">
+            <div class="app-header">
+                <div class="logo-section">
+                    <h2>SecurePlus</h2>
+                </div>
+                <div class="search-section">
+                    <input type="text" id="search-box" placeholder="Search files...">
+                    <button id="search-button">
+                        <span class="material-icons">search</span>
+                    </button>
+                </div>
+                <div class="user-section">
+                    <span class="material-icons">notifications</span>
+                    <span class="user-avatar" id="user-avatar"></span>
+                    <span id="username-display"></span>
+                    <button id="logout-button">Logout</button>
+                </div>
+            </div>
+
+            <div class="app-body">
+                <div class="sidebar">
+                    <div class="sidebar-section">
+                        <button id="new-document" class="create-new">
+                            <span class="material-icons">add</span>
+                            Create New
+                        </button>
+                    </div>
+                    <div class="sidebar-menu">
+                        <div class="menu-item active" data-view="my-files">
+                            <span class="material-icons">folder</span>
+                            <span>My Files</span>
+                        </div>
+                        <div class="menu-item" data-view="documents">
+                            <span class="material-icons">description</span>
+                            <span>Documents</span>
+                        </div>
+                        <div class="menu-item" data-view="spreadsheets">
+                            <span class="material-icons">grid_on</span>
+                            <span>Spreadsheets</span>
+                        </div>
+                        <div class="menu-item" data-view="presentations">
+                            <span class="material-icons">slideshow</span>
+                            <span>Presentations</span>
+                        </div>
+                        <div class="menu-item" data-view="emails">
+                            <span class="material-icons">email</span>
+                            <span>Emails</span>
+                        </div>
+                        <div class="menu-item" data-view="chat">
+                            <span class="material-icons">chat</span>
+                            <span>Secure Chat</span>
+                        </div>
+                        <div class="menu-item" data-view="settings">
+                            <span class="material-icons">settings</span>
+                            <span>Settings</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-area">
+                    <!-- My Files View (Default) -->
+                    <div id="my-files-view" class="content-view active">
+                        <h2>My Files</h2>
+                        <div class="files-grid" id="files-container">
+                            <!-- Files will be populated here dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Document Editor View -->
+                    <div id="document-editor-view" class="content-view hidden">
+                        <div class="editor-header">
+                            <input type="text" id="document-title" placeholder="Untitled Document">
+                            <div class="editor-controls">
+                                <button id="save-document">Save</button>
+                                <button id="close-document">Close</button>
+                            </div>
+                        </div>
+                        <div class="document-toolbar">
+                            <label for="font-family" class="sr-only">Font Family</label>
+                            <select id="font-family">
+                                <option value="Arial">Arial</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Courier New">Courier New</option>
+                            </select>
+                            <label for="font-size" class="sr-only">Font Size</label>
+                            <select id="font-size">
+                                <option value="10">10</option>
+                                <option value="12" selected>12</option>
+                                <option value="14">14</option>
+                                <option value="16">16</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                            </select>
+                            <button id="bold"><b>B</b></button>
+                            <button id="italic"><i>I</i></button>
+                            <button id="underline"><u>U</u></button>
+                            <button id="align-left">
+                                <span class="material-icons">format_align_left</span>
+                            </button>
+                            <button id="align-center">
+                                <span class="material-icons">format_align_center</span>
+                            </button>
+                            <button id="align-right">
+                                <span class="material-icons">format_align_right</span>
+                            </button>
+                        </div>
+                        <div class="document-content">
+                            <div id="document-editor" contenteditable="true"></div>
+                        </div>
+                    </div>
+
+                    <!-- Spreadsheet Editor View -->
+                    <div id="spreadsheet-editor-view" class="content-view hidden">
+                        <div class="editor-header">
+                            <input type="text" id="spreadsheet-title" placeholder="Untitled Spreadsheet">
+                            <div class="editor-controls">
+                                <button id="save-spreadsheet">Save</button>
+                                <button id="close-spreadsheet">Close</button>
+                            </div>
+                        </div>
+                        <div class="spreadsheet-toolbar">
+                            <button id="add-row">Add Row</button>
+                            <button id="add-column">Add Column</button>
+                            <button id="delete-row">Delete Row</button>
+                            <button id="delete-column">Delete Column</button>
+                            <label for="cell-format" class="form-label">Cell format:</label>
+                            <select id="cell-format">
+                                <option value="text">Text</option>
+                                <option value="number">Number</option>
+                                <option value="currency">Currency</option>
+                                <option value="date">Date</option>
+                            </select>
+                        </div>
+                        <div class="spreadsheet-content">
+                            <div id="spreadsheet-editor"></div>
+                        </div>
+                    </div>
+
+                    <!-- Email View -->
+                    <div id="emails-view" class="content-view hidden">
+                        <h2>Secure Emails</h2>
+                        <div class="email-toolbar">
+                            <button id="compose-email">Compose</button>
+                            <button id="refresh-emails">Refresh</button>
+                        </div>
+                        <div class="email-list" id="email-container">
+                            <!-- Emails will be populated here dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Chat View -->
+                    <div id="chat-view" class="content-view hidden">
+                        <h2>Secure Chat</h2>
+                        <div class="chat-container">
+                            <div class="chat-users">
+                                <h3>Users</h3>
+                                <div id="chat-users-list">
+                                    <!-- Users will be populated here -->
+                                </div>
+                            </div>
+                            <div class="chat-messages">
+                                <div id="messages-container"></div>
+                                <div class="chat-input">
+                                    <input type="text" id="chat-message" placeholder="Type a message...">
+                                    <button id="send-message">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings View -->
+                    <div id="settings-view" class="content-view hidden">
+                        <h2>Settings</h2>
+                        <div class="settings-container">
+                            <div class="settings-section">
+                                <h3>Account Settings</h3>
+                                <div class="setting-item">
+                                    <label for="change-password">Change Password</label>
+                                    <input type="password" id="change-password" placeholder="New Password">
+                                    <button id="update-password">Update</button>
+                                </div>
+                            </div>
+                            <div class="settings-section">
+                                <h3>Security Settings</h3>
+                                <div class="setting-item">
+                                    <label for="chess-sequence">Chess Login Sequence</label>
+                                    <button id="update-chess-sequence">Update Sequence</button>
+                                </div>
+                                <div class="setting-item">
+                                    <label for="enable-mfa">Enable Multi-Factor Authentication</label>
+                                    <input type="checkbox" id="enable-mfa">
+                                </div>
+                            </div>
+                            <div class="settings-section">
+                                <h3>App Settings</h3>
+                                <div class="setting-item">
+                                    <label for="theme-select">Theme</label>
+                                    <select id="theme-select">
+                                        <option value="dark">Dark Theme</option>
+                                        <option value="light">Light Theme</option>
+                                        <option value="neon">Neon Theme</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for creating new documents -->
+    <div id="new-document-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Create New</h3>
+            <div class="document-options">
+                <div class="doc-option" data-type="word">
+                    <span class="material-icons">description</span>
+                    <p>Document</p>
+                </div>
+                <div class="doc-option" data-type="excel">
+                    <span class="material-icons">grid_on</span>
+                    <p>Spreadsheet</p>
+                </div>
+                <div class="doc-option" data-type="presentation">
+                    <span class="material-icons">slideshow</span>
+                    <p>Presentation</p>
+                </div>
+            </div>
+            <div class="modal-form">
+                <input type="text" id="new-doc-name" placeholder="Enter a name">
+                <button id="create-doc">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for composing emails -->
+    <div id="email-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Compose Email</h3>
+            <div class="email-form">
+                <input type="text" id="email-recipient" placeholder="Recipient">
+                <input type="text" id="email-subject" placeholder="Subject">
+                <textarea id="email-body" placeholder="Message"></textarea>
+                <button id="send-email">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <script src="js/chess-init.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/document-editor.js"></script>
+    <script src="js/spreadsheet-editor.js"></script>
+    <script src="js/secure-file-system.js"></script>
+</body>
+</html>
